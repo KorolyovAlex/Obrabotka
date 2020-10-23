@@ -48,15 +48,30 @@ namespace Lab1
 
         public static Bitmap LogTransform(Bitmap image)
         {
+            int maxR = 0, maxG = 0, maxB = 0;
+
             for (int width = 0; width < image.Size.Width; width++)
             {
                 for (int height = 0; height < image.Size.Height; height++)
                 {
                     Color pixel = image.GetPixel(width, height);
+
+                    maxR = pixel.R > maxR ? pixel.R : maxR;
+                    maxG = pixel.G > maxG ? pixel.G : maxG;
+                    maxB = pixel.B > maxB ? pixel.B : maxB;
+                }
+            }
+
+            for (int width = 0; width < image.Size.Width; width++)
+            {
+                for (int height = 0; height < image.Size.Height; height++)
+                {
+                    Color pixel = image.GetPixel(width, height);
+
                     int alpha = pixel.A;
-                    int red = CheckValue((int)Math.Log10(1 + pixel.R));
-                    int green = CheckValue((int)Math.Log10(1 + pixel.G));
-                    int blue = CheckValue((int)Math.Log10(1 + pixel.B));
+                    int red = CheckValue((int)(MAX_RGB_VALUE * Math.Log10(1 + pixel.R) / Math.Log10(1 + maxR)));
+                    int green = CheckValue((int)(MAX_RGB_VALUE * Math.Log10(1 + pixel.G) / Math.Log10(1 + maxG)));
+                    int blue = CheckValue((int)(MAX_RGB_VALUE * Math.Log10(1 + pixel.B) / Math.Log10(1 + maxB)));
 
                     Color newColor = Color.FromArgb(alpha, red, green, blue);
                     image.SetPixel(width, height, newColor);

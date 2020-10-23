@@ -12,11 +12,11 @@ namespace Lab1
             Bitmap newImage = ImageHandler.MultByConst(firstImage, 2);
             newImage.Save("MultByConst.bmp");
 
-            newImage = ImageHandler.AddConst(firstImage, 33);
+            newImage = ImageHandler.AddConst(firstImage, 150);
             newImage.Save("AddConst.bmp");
 
             newImage = ImageHandler.LogTransform(firstImage);
-            newImage.Save("LogTranform.bmp");
+            newImage.Save("LogTranform2.bmp");
 
             newImage = ImageHandler.PowerTransform(firstImage, 3);
             newImage.Save("PowerTransform.bmp");
