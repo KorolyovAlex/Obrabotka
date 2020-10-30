@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
@@ -57,6 +55,8 @@ namespace Lab2
             DrawHist(equalHistDataB, BEqualChart);
 
             LinearContrast();
+
+            GetImages();
 
             RChart.Show();
             currentChart = RChart;
@@ -125,6 +125,52 @@ namespace Lab2
             newImage.Save("LinearContrast.bmp");
         }
 
+        private void GetImages()
+        {
+            Bitmap newImage = new Bitmap(Properties.Resources.cakes);
+
+            List<Bitmap> images = new List<Bitmap>();
+
+            for (int i = 0; i < 8; i++)
+            {
+                images.Add(new Bitmap(Properties.Resources.cakes));
+            }
+
+            int alpha;
+            int red;
+            int green;
+            int blue;
+
+            for (int width = 0; width < newImage.Size.Width; width++)
+            {
+                for (int height = 0; height < newImage.Size.Height; height++)
+                {
+                    Color pixel = _image.GetPixel(width, height);
+
+                    char[] binaryR = ConvertToBinary(pixel.R);
+                    char[] binaryG = ConvertToBinary(pixel.G);
+                    char[] binaryB = ConvertToBinary(pixel.B);
+
+                    for(int k = 0; k < 8; k++)
+                    {
+                        alpha = pixel.A;
+                        red = binaryR[k] == '1' ? (int)Math.Pow(2, 7 - k) : 0; 
+                        green = binaryG[k] == '1' ? (int)Math.Pow(2, 7 - k) : 0;
+                        blue = binaryB[k] == '1' ? (int)Math.Pow(2, 7 - k) : 0;
+
+                        Color newColor = Color.FromArgb(alpha, red, green, blue);
+                        images[7 - k].SetPixel(width, height, newColor);
+                    }
+                }
+            }
+
+            int counter = 1; 
+            foreach(Bitmap image in images)
+            {
+                image.Save($"image{counter++}.bmp");
+            }
+        }
+
         private void DrawHist(int[] histData, Chart chart)
         {
             for(int i = 0; i < histData.Length; i++)
@@ -166,6 +212,26 @@ namespace Lab2
                 }
                 i--;
             }
+        }
+
+        private char[] ConvertToBinary(int number)
+        {
+            StringBuilder binary = new StringBuilder();
+            while(number > 1)
+            {
+                binary.Append(number % 2);
+                number /= 2;
+            }
+            binary.Append(number);
+
+            while(binary.Length < 8)
+            {
+                binary.Append(0);
+            }
+
+            char[] charArray = binary.ToString().ToCharArray();
+            Array.Reverse(charArray);
+            return charArray;
         }
 
         private void showRHistButton_Click(object sender, EventArgs e)

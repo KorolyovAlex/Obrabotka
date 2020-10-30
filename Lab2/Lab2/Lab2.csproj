@@ -86,9 +86,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\4k-HD-Wallpapers-4.jpg" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\Rq8OIXEzZUs.jpg" />
   </ItemGroup>
   <ItemGroup>
