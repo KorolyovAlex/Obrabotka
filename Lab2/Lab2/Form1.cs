@@ -11,7 +11,10 @@ namespace Lab2
 {
     public partial class Form1 : Form
     {
-        private const short MAX_VALUE = 255;
+        private const byte MAX_VALUE = 255;
+        private const byte MIN_VALUE = 0;
+        private const byte FIXED_MAX_VALUE = 255;
+        private const byte FIXED_MIN_VALUE = 0;
 
         private readonly Bitmap _image;
 
@@ -53,6 +56,8 @@ namespace Lab2
             DrawHist(equalHistDataG, GEqualChart);
             DrawHist(equalHistDataB, BEqualChart);
 
+            LinearContrast();
+
             RChart.Show();
             currentChart = RChart;
         }
@@ -90,6 +95,36 @@ namespace Lab2
             }
         }
 
+        private void LinearContrast()
+        {
+            Bitmap newImage = new Bitmap(Properties.Resources.cakes);
+
+            int maxR = GetMaxValue(histDataR);
+            int minR = GetMinValue(histDataR);
+
+            int maxG = GetMaxValue(histDataG);
+            int minG = GetMinValue(histDataG);
+
+            int maxB = GetMaxValue(histDataB);
+            int minB = GetMinValue(histDataB);
+
+            for (int width = 0; width < newImage.Size.Width; width++)
+            {
+                for (int height = 0; height < newImage.Size.Height; height++)
+                {
+                    Color pixel = _image.GetPixel(width, height);
+                    int alpha = pixel.A;
+                    int red = (pixel.R - minR) * (FIXED_MAX_VALUE - FIXED_MIN_VALUE) / (maxR - minR) + FIXED_MIN_VALUE;
+                    int green = (pixel.G - minG) * (FIXED_MAX_VALUE - FIXED_MIN_VALUE) / (maxG - minG) + FIXED_MIN_VALUE;
+                    int blue = (pixel.B - minB) * (FIXED_MAX_VALUE - FIXED_MIN_VALUE) / (maxB - minB) + FIXED_MIN_VALUE;
+
+                    Color newColor = Color.FromArgb(alpha, red, green, blue);
+                    newImage.SetPixel(width, height, newColor);
+                }
+            }
+            newImage.Save("LinearContrast.bmp");
+        }
+
         private void DrawHist(int[] histData, Chart chart)
         {
             for(int i = 0; i < histData.Length; i++)
@@ -103,6 +138,34 @@ namespace Lab2
             currentChart.Hide();
             newChart.Show();
             currentChart = newChart;
+        }
+
+        private int GetMinValue(int[] data)
+        {
+            int i = MIN_VALUE;
+
+            while(true)
+            {
+                if(data[i] != 0)
+                {
+                    return i;
+                }
+                i++;
+            }
+        }
+
+        private int GetMaxValue(int[] data)
+        {
+            int i = MAX_VALUE;
+
+            while (true)
+            {
+                if (data[i] != 0)
+                {
+                    return i;
+                }
+                i--;
+            }
         }
 
         private void showRHistButton_Click(object sender, EventArgs e)
